@@ -1427,7 +1427,10 @@ from .weibo import (
     WeiboMobileIE
 )
 from .weiqitv import WeiqiTVIE
-from .willowtv import WillowTvReplayIE
+from .willowtv import (
+    WillowTvReplayIE,
+    WillowTvVideoIE,
+)
 from .wistia import WistiaIE
 from .worldstarhiphop import WorldStarHipHopIE
 from .wsj import (
