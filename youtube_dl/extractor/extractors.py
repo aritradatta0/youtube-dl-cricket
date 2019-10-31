@@ -236,6 +236,7 @@ from .contv import CONtvIE
 from .corus import CorusIE
 from .cracked import CrackedIE
 from .crackle import CrackleIE
+from .cricketcomau import CricketComAuLiveIE
 from .crooksandliars import CrooksAndLiarsIE
 from .crunchyroll import (
     CrunchyrollIE,
