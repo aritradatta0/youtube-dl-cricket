@@ -136,10 +136,13 @@ class HotStarIE(HotStarBaseIE):
         title = video_data['title']
 
         headers = {'Referer': url}
-        formats = []
         geo_restricted = False
         playback_sets = self._call_api_v2('play/v2/playback/content', video_id, country_code)['playBackSets']
+        entries = []
+        index = -1
         for playback_set in playback_sets:
+            formats = []
+            index += 1
             if not isinstance(playback_set, dict):
                 continue
             format_url = url_or_none(playback_set.get('playbackUrl'))
@@ -173,29 +176,34 @@ class HotStarIE(HotStarBaseIE):
                 if isinstance(e.cause, compat_HTTPError) and e.cause.code == 403:
                     geo_restricted = True
                 continue
-        if not formats and geo_restricted:
+            if not formats:
+                continue
+
+            self._sort_formats(formats)
+            for f in formats:
+                f.setdefault('http_headers', {}).update(headers)
+
+            entries.append({
+                'id': video_id + '-' + str(index),
+                'title': title,
+                'description': video_data.get('description'),
+                'duration': int_or_none(video_data.get('duration')),
+                'timestamp': int_or_none(video_data.get('broadcastDate') or video_data.get('startDate')),
+                'formats': formats,
+                'channel': video_data.get('channelName'),
+                'channel_id': video_data.get('channelId'),
+                'series': video_data.get('showName'),
+                'season': video_data.get('seasonName'),
+                'season_number': int_or_none(video_data.get('seasonNo')),
+                'season_id': video_data.get('seasonId'),
+                'episode': title,
+                'episode_number': int_or_none(video_data.get('episodeNo')),
+            })
+
+        if not entries and geo_restricted:
             self.raise_geo_restricted(countries=['IN'])
-        self._sort_formats(formats)
 
-        for f in formats:
-            f.setdefault('http_headers', {}).update(headers)
-
-        return {
-            'id': video_id,
-            'title': title,
-            'description': video_data.get('description'),
-            'duration': int_or_none(video_data.get('duration')),
-            'timestamp': int_or_none(video_data.get('broadcastDate') or video_data.get('startDate')),
-            'formats': formats,
-            'channel': video_data.get('channelName'),
-            'channel_id': video_data.get('channelId'),
-            'series': video_data.get('showName'),
-            'season': video_data.get('seasonName'),
-            'season_number': int_or_none(video_data.get('seasonNo')),
-            'season_id': video_data.get('seasonId'),
-            'episode': title,
-            'episode_number': int_or_none(video_data.get('episodeNo')),
-        }
+        return self.playlist_result(entries, video_id)
 
 
 class HotStarPlaylistIE(HotStarBaseIE):
