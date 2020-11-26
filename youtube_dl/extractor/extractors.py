@@ -1084,6 +1084,12 @@ from .stitcher import StitcherIE
 from .sport5 import Sport5IE
 from .sportbox import SportBoxIE
 from .sportdeutschland import SportDeutschlandIE
+from .spreaker import (
+    SpreakerIE,
+    SpreakerPageIE,
+    SpreakerShowIE,
+    SpreakerShowPageIE,
+)
 from .springboardplatform import SpringboardPlatformIE
 from .sprout import SproutIE
 from .srgssr import (
@@ -1377,6 +1383,7 @@ from .vk import (
 )
 from .vlive import (
     VLiveIE,
+    VLivePostIE,
     VLiveChannelIE,
 )
 from .vodlocker import VodlockerIE
